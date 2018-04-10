@@ -10,28 +10,73 @@ using namespace std;
 int main(int argc, char** argv)
 {
 
-	ifstream infile;
-	ofstream outfile;
-	string plainText;
-	infile.open("text.txt");
 
-	infile >> plainText;
+
+	/* Create an instance of the DES cipher */
+	// check arguments if too little or too much
+	if(argc != 6){
+			cout << "Too little or too many arguments used" << endl;
+			cout << "./cipher <CIPHER NAME> <KEY> <ENC/DEC> <INPUTFILE> <OUTPUT FILE>\n";
+			return 1;
+	}
 
 	/* Create an instance of the DES cipher */
 	CipherInterface* cipher = NULL;
-	AES aestest;
+	ifstream infile;
+	ofstream outfile;
+
+	// get key from arguments
+	unsigned char * key = (unsigned char*)argv[2];
+	printf("KEY: %s\n", key);
 
 	unsigned char * cipherText;
 	unsigned char * output;
 
-	aestest.setKey((unsigned char*)"00123456789abcdef");
+	if(string(argv[1]) == "DES"){
+		cipher = new DES();
 
-	cipherText = aestest.encrypt((unsigned char*)plainText.c_str());
-	printf("%s\n",cipherText );
-	aestest.setKey((unsigned char*)"10123456789abcdef");
-	output = aestest.decrypt(cipherText);
-	outfile.open("yes.txt");
-	outfile << output;
+		infile.open(argv[4]);
+		string input;
+		infile >> input;
+		unsigned char *inputText = (unsigned char*)input.c_str();
+		unsigned char *output;
+
+		if(!cipher->setKey(key)){
+			cout << "Key was not valid" << endl;
+		}
+
+		if(string(argv[3]) == "ENC"){
+			output = cipher->encrypt(inputText);	
+		}else if(string(argv[3]) == "DEC"){
+			output = cipher->decrypt(inputText);
+		}
+		outfile.open(argv[5]);
+		outfile << output;
+		outfile.close();
+		infile.close();
+	}
+	else if(string(argv[1]) == "AES"){
+		cout << "AES" << endl;
+	}
+
+	// aestest.setKey((unsigned char*)"00123456789abcdef");
+	//
+	// cipherText = aestest.encrypt((unsigned char*)plainText.c_str());
+	// printf("%s\n",cipherText );
+	// aestest.setKey((unsigned char*)"10123456789abcdef");
+	// output = aestest.decrypt(cipherText);
+	// outfile.open("yes.txt");
+	// printf("%s\n",output );
+	// outfile << output;
+
+	// DES destest;
+	// if(destest.setKey((unsigned char*)"0123456789abcdef")){
+	// 	cout << "good set" << endl;
+	// };
+	// cipherText = destest.encrypt((unsigned char*)"BillyBob");
+	// printf("CipherText: %s\n", cipherText);
+	// output = destest.decrypt(cipherText);
+	// printf("PlainText: %s\n", output);
 
 
 	/* Error checks */
@@ -42,19 +87,7 @@ int main(int argc, char** argv)
 	// 	exit(-1);
 	// }
 
-	/* Set the encryption key
-	 * A valid key comprises 16 hexidecimal
-	 * characters. Below is one example.
-	 * Your program should take input from
-	 * command line.
-	 */
-	//cipher->setKey((unsigned char*)"0123456789abcdef");
 
-	/* Perform encryption */
-	//string cipherText = cipher->encrypt("hello world");
-
-	/* Perform decryption */
-	//cipher->decrypt(cipherText);
 
 	return 0;
 }

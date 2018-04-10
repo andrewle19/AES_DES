@@ -49,7 +49,6 @@ class AES: public CipherInterface
 	/* The protected members */
 protected:
 		AES_KEY decEncKey; // AES key used to encrypt and decrypt
-		AES_KEY decKey;
 
 };
 

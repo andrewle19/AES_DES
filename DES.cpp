@@ -11,56 +11,57 @@ bool DES::setKey(const unsigned char* keyArray)
 	 * First let's covert the char string
 	 * into an integer byte string
 	 */
-	
-	
+
+
 	/* The key error code */
 	int keyErrorCode = -1;
 
 	/* A single byte */
-	unsigned char singleByte = 0;	
-	
+	unsigned char singleByte = 0;
+
 	/* The key index */
 	int keyIndex = 0;
-	
+
 	/* The DES key index */
 	int desKeyIndex = 0;
-		
+
 	/* Go through the entire key character by character */
 	while(desKeyIndex != 8)
 	{
 		/* Convert the key if the character is valid */
-		if((this->des_key[desKeyIndex] = twoCharToHexByte(keyArray + keyIndex)) == 'z')
+		if((this->des_key[desKeyIndex] = twoCharToHexByte(keyArray + keyIndex)) == 'z'){
 			return false;
-		
+		}
+
 		/* Go to the second pair of characters */
-		keyIndex += 2;	
-		
+		keyIndex += 2;
+
 		/* Increment the index */
 		++desKeyIndex;
 	}
-	
+
 	fprintf(stdout, "DES KEY: ");
-	
+
 	/* Print the key */
 	for(keyIndex = 0; keyIndex < 8; ++keyIndex)
 		fprintf(stdout, "%x", this->des_key[keyIndex]);
-	
-	fprintf(stdout, "\n");	
-	
-	
+
+	fprintf(stdout, "\n");
+
+
 	/* Set the encryption key */
 	if ((keyErrorCode = des_set_key_checked(&des_key, this->key)) != 0)
 	{
 		fprintf(stderr, "\nkey error %d\n", keyErrorCode);
-		
+
 		return false;
 	}
-	
-	/* All is well */	
+
+	/* All is well */
 	return true;
 }
 
-/**	
+/**
  * Encrypts a plaintext string
  * @param plaintext - the plaintext string
  * @return - the encrypted ciphertext string
@@ -75,11 +76,52 @@ unsigned char* DES::encrypt(const unsigned char* plaintext)
 	//5. Perform des_encrypt1 in order to encrypt the block using this->key (see sample codes for details)
 	//6. Convert the first ciphertext long to 4 characters using ltoc()
 	//7. Convert the second ciphertext long to 4 characters using ltoc()
-	//8. Save the results in the the dynamically allocated char array 
+	//8. Save the results in the the dynamically allocated char array
 	// (e.g. unsigned char* bytes = nerw unsigned char[8]).
 	//9. Return the pointer to the dynamically allocated array.
-	
-	return NULL;
+	int plaintextCount =  strlen((char*)plaintext);
+
+	// store cipherText in dynamic char array
+	unsigned char * cipherText;
+	cipherText = new unsigned char[8];
+
+	//unsigned char plainText[9];
+
+	// makes sure the block is exactly 8 characters
+	if(plaintextCount != 8){
+		cout << "Plain Text is not applicable" << endl;
+		return NULL;
+	}
+
+	unsigned char * plain = (unsigned char*)plaintext;
+
+	// each block is 32 bits
+	DES_LONG block[2];
+
+
+
+	// put first 4 bytes of the plaintext in the a long
+	block[0] = ctol(plain);
+
+	// put the next 4 bytes of the plain text into a long block
+	block[1] = ctol(plain + 4);
+
+	// encrypt both blocks with key, 1 means ENC 0 means DEC
+	des_encrypt1(block, key, 1);
+
+
+
+	//Convert the first 32 bits of ciphertext from block to char array
+	ltoc(block[0], cipherText);
+
+
+	// conver the second 32 bit block of ciphertext to char array
+	ltoc(block[1], cipherText + 4);
+
+
+
+
+	return cipherText;
 }
 
 /**
@@ -89,8 +131,43 @@ unsigned char* DES::encrypt(const unsigned char* plaintext)
  */
 unsigned char* DES::decrypt(const unsigned char* ciphertext)
 {
-	//LOGIC:
 	// Same logic as encrypt(), except in step 5. decrypt instead of encrypting
+
+	// Declare DES long block
+	DES_LONG block[2];
+
+	// save the length of the cipher text
+	int cipherTextCount =  strlen((char*)ciphertext);
+
+	// store cipherText in dynamic char array
+	unsigned char * plainText;
+	plainText = new unsigned char[8];
+
+	//unsigned char plainText[9];
+
+	// makes sure the block is exactly 8 characters
+	if(cipherTextCount != 8){
+		cout << "Cipher Text is not applicable" << endl;
+		return NULL;
+	}
+	// put first 4 bytes of the plaintext in the a long
+	block[0] = ctol((unsigned char*)ciphertext);
+
+	// put the next 4 bytes of the plain text into a long block
+	block[1] = ctol((unsigned char*)ciphertext + 4);
+
+	// Decrypt BLock
+	des_encrypt1(block,key,0);
+
+	//Convert the first 32 bits of ciphertext from block to char array
+	ltoc(block[0],plainText);
+
+	//Convert the second 32 bits of ciphertext from block to char array
+	ltoc(block[1],plainText + 4);
+
+
+	printf("Decrypted %s\n", plainText);
+	return plainText;
 }
 
 /**
@@ -100,11 +177,11 @@ unsigned char* DES::decrypt(const unsigned char* ciphertext)
  * @return - the long integer (32 bits) where each byte
  * is equivalent to one of the bytes in a character array
  */
-DES_LONG DES::ctol(unsigned char *c) 
+DES_LONG DES::ctol(unsigned char *c)
 {
         /* The long integer */
 	DES_LONG l;
-        
+
 	l =((DES_LONG)(*((c)++)));
         l = l | (((DES_LONG)(*((c)++)))<<8L);
         l = l | (((DES_LONG)(*((c)++)))<<16L);
@@ -113,13 +190,13 @@ DES_LONG DES::ctol(unsigned char *c)
 };
 
 
-/** 
+/**
  * Converts a long integer (4 bytes = 32 bits)
  * into an array of 8 characters.
  * @param l - the long integer to convert
  * @param c - the character array to store the result
  */
-void DES::ltoc(DES_LONG l, unsigned char *c) 
+void DES::ltoc(DES_LONG l, unsigned char *c)
 {
         *((c)++)=(unsigned char)(l&0xff);
         *((c)++)=(unsigned char)(((l)>> 8L)&0xff);
@@ -134,14 +211,14 @@ void DES::ltoc(DES_LONG l, unsigned char *c)
  */
 unsigned char DES::charToHex(const char& character)
 {
-	/* Is the first digit 0-9 ? */	
-	if(character >= '0' && character <= '9')	
+	/* Is the first digit 0-9 ? */
+	if(character >= '0' && character <= '9')
 		/* Convert the character to hex */
 		return character - '0';
 	/* It the first digit a letter 'a' - 'f'? */
 	else if(character >= 'a' && character <= 'f')
 		/* Conver the cgaracter to hex */
-		return (character - 97) + 10;	
+		return (character - 97) + 10;
 	/* Invalid character */
 	else return 'z';
 }
@@ -161,30 +238,28 @@ unsigned char DES::twoCharToHexByte(const unsigned char* twoChars)
 {
 	/* The byte */
 	unsigned char singleByte;
-	
+
 	/* The second character */
 	unsigned char secondChar;
 
 	/* Convert the first character */
-	if((singleByte = charToHex(twoChars[0])) == 'z') 
+	if((singleByte = charToHex(twoChars[0])) == 'z')
 	{
 		/* Invalid digit */
 		return 'z';
 	}
-	
+
 	/* Move the newly inserted nibble from the
 	 * lower to upper nibble.
 	 */
 	singleByte = (singleByte << 4);
-	
+
 	/* Conver the second character */
 	if((secondChar = charToHex(twoChars[1])) == 'z')
-		return 'z'; 
-	
-	/* Insert the second value into the lower nibble */	
+		return 'z';
+
+	/* Insert the second value into the lower nibble */
 	singleByte |= secondChar;
 
 	return singleByte;
 }
-
-

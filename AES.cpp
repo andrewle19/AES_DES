@@ -70,8 +70,11 @@ unsigned char* AES::encrypt(const unsigned char* plainText)
 
 	printf("%s\n",plainText );
 	unsigned char *cipherText; // store cipherText Dynamically
-	// store cipherText Dynamically
-	cipherText = (unsigned char *)malloc(sizeof(unsigned char)*plainTextLength);
+
+
+	// store cipherText Dynamically HEAP based on plain text size
+	cipherText = new unsigned char[plainTextLength];
+	//cipherText = (unsigned char *)malloc(sizeof(unsigned char)*plainTextLength); C WAY
 
 
 	// USe AES to encrypt the plaintext to cipher text
@@ -87,17 +90,21 @@ unsigned char* AES::encrypt(const unsigned char* plainText)
  */
 unsigned char* AES::decrypt(const unsigned char* cipherText)
 {
+	// calculate cipher text length
 	int cipherTextLength = strlen((char*)cipherText);
 	unsigned char aes_input[]= "helloworld123456";
-	unsigned char *dec_out;
-	dec_out = (unsigned char *)malloc(sizeof(unsigned char)*cipherTextLength);
 
-	AES_ecb_encrypt(cipherText, dec_out, &decEncKey, AES_DECRYPT);
-	printf("%s\n", dec_out );
-	//TODO: 1. Dynamically allocate a block to store the plaintext.
-	//	2. Use AES_ecb_encrypt(...) to decrypt the text (please see the URL in setKey(...)
-	//	and the aes.cpp example provided.
-	// 	3. Return the pointer to the plaintext
+	unsigned char *plainText;
 
-	return dec_out;
+	// Allocate plainText space dynamically
+	plainText = new unsigned char[cipherTextLength];
+
+	// dec_out = (unsigned char *)malloc(sizeof(unsigned char)*cipherTextLength); CWAY
+
+
+	// DECRYPT THE ciphertext
+	AES_ecb_encrypt(cipherText, plainText, &decEncKey, AES_DECRYPT);
+
+
+	return plainText;
 }
