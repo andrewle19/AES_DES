@@ -30,7 +30,6 @@ bool AES::setKey(const unsigned char* aes_key)
 	// if first byte is 0 means encryption
 	if(aes_key[0] == '0') {
 
-		cout << "Encrypt" << endl;
 
 		// set the encrypt key checks if it sets properly
 		if(AES_set_encrypt_key(buffer,128,&decEncKey) != 0){
@@ -43,7 +42,6 @@ bool AES::setKey(const unsigned char* aes_key)
 }
 	// first byte is anything but 0 means we decrypt
 	else{
-		cout << "Decrypt" << endl;
 
 		if(AES_set_decrypt_key(buffer,128,&decEncKey) != 0){
 			cout << "Key was invalid" << endl;
@@ -51,7 +49,6 @@ bool AES::setKey(const unsigned char* aes_key)
 		}
 
 	}
-
 	return true;
 
 }
@@ -66,9 +63,7 @@ unsigned char* AES::encrypt(const unsigned char* plainText)
 
 	// calculate plain text length
 	int plainTextLength = strlen((char*)plainText);
-	unsigned char aes_input[]= "helloworld123456";
 
-	printf("%s\n",plainText );
 	unsigned char *cipherText; // store cipherText Dynamically
 
 
@@ -92,7 +87,6 @@ unsigned char* AES::decrypt(const unsigned char* cipherText)
 {
 	// calculate cipher text length
 	int cipherTextLength = strlen((char*)cipherText);
-	unsigned char aes_input[]= "helloworld123456";
 
 	unsigned char *plainText;
 
@@ -104,6 +98,7 @@ unsigned char* AES::decrypt(const unsigned char* cipherText)
 
 	// DECRYPT THE ciphertext
 	AES_ecb_encrypt(cipherText, plainText, &decEncKey, AES_DECRYPT);
+	printf("Decrypted: %s\n",plainText);
 
 
 	return plainText;
