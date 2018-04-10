@@ -1,5 +1,7 @@
+#include<iostream>
 #include <string>
 #include "CipherInterface.h"
+#include <fstream>
 #include "DES.h"
 #include "AES.h"
 
@@ -7,28 +9,29 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-	/**
-	 * TODO: Replace the code below	with your code which can SWITCH
-	 * between DES and AES and encrypt files. DO NOT FORGET TO PAD
-	 * THE LAST BLOCK IF NECESSARY.
-	 *
-	 * NOTE: due to the incomplete skeleton, the code may crash or
-	 * misbehave.
-	 */
 
+	ifstream infile;
+	ofstream outfile;
+	string plainText;
+	infile.open("text.txt");
 
+	infile >> plainText;
 
 	/* Create an instance of the DES cipher */
 	CipherInterface* cipher = NULL;
 	AES aestest;
-	const static unsigned char aes_key[]={0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xAA,0xBB,0xCC,0xDD,0xEE,0xFF};
-	unsigned char * x;
+
+	unsigned char * cipherText;
+	unsigned char * output;
+
 	aestest.setKey((unsigned char*)"00123456789abcdef");
 
-	x = aestest.encrypt((unsigned char*)"0123456789abcdef");
-	printf("%s\n",x );
+	cipherText = aestest.encrypt((unsigned char*)plainText.c_str());
+	printf("%s\n",cipherText );
 	aestest.setKey((unsigned char*)"10123456789abcdef");
-	aestest.decrypt(x);
+	output = aestest.decrypt(cipherText);
+	outfile.open("yes.txt");
+	outfile << output;
 
 
 	/* Error checks */
