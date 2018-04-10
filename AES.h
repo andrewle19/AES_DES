@@ -47,8 +47,9 @@ class AES: public CipherInterface
 
 
 	/* The protected members */
-private:
-		AES_KEY *decEncKey; // makes aes pointer to dec or enc key
+protected:
+		AES_KEY decEncKey; // AES key used to encrypt and decrypt
+		AES_KEY decKey;
 
 };
 

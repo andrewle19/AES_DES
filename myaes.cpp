@@ -12,7 +12,7 @@ const static unsigned char aes_key[]={0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x
 int main( )
 {
 	/* Input data to encrypt (128-bits i.e., 16 bytes) */
-	unsigned char aes_input[]="helloworld123456";
+	unsigned char aes_input[]= "helloworld123456";
 
 	/* Buffers for Encryption and Decryption. NOTE: I am making my buffers
 	 * 18 here in order to leave one place for the string NULL terminator
@@ -29,7 +29,7 @@ int main( )
 	AES_KEY enc_key, dec_key;
 
 	/* Set the encryption key */
-	if(AES_set_encrypt_key(aes_key, 128, &enc_key)!=0)
+	if(AES_set_encrypt_key((unsigned char*)"0123456789abcdef", 128, &enc_key)!=0)
 	{
 		fprintf(stderr, "AES_set_encrypt_key() failed!\n");
 		exit(-1);
@@ -42,7 +42,7 @@ int main( )
 	fprintf(stderr ,"ENC OUT %s\n", enc_out);
 
 	/* Set the decryption key */
-	if(AES_set_decrypt_key(aes_key, 128, &dec_key) != 0)
+	if(AES_set_decrypt_key((unsigned char*)"0123456789abcdef", 128, &dec_key) != 0)
 	{
 		fprintf(stderr, "AES_set_decrypt_key() failed!\n");
 	}
