@@ -12,8 +12,8 @@ cipher.o:	cipher.cpp
 # myaes:	myaes.cpp
 # 	g++ myaes.cpp -o myaes -lcrypto
 #
-# DES.o:	DES.cpp DES.h
-# 	g++ -g -c DES.cpp
+DES.o: DES.cpp DES.h
+	g++ -g -c DES.cpp
 
 AES.o:	AES.cpp AES.h
 	g++ -g -c AES.cpp

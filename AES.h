@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <openssl/aes.h>
+#include <cstring>
 #include <string>
 #include "CipherInterface.h"
 #include <ctype.h>

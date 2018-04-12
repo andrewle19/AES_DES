@@ -19,5 +19,5 @@ How to Execute Program
 
 
 Example Command
-./cipher "00123456789abcdef" AES ENC input.txt cipher.txt
-./cipher "0123456789abcdef" DES ENC input.txt cipher.txt
+./cipher AES "00123456789abcdef" ENC input.txt cipher.txt
+./cipher DES "0123456789abcdef" ENC input.txt cipher.txt
