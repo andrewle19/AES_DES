@@ -2,10 +2,16 @@
 #include <string>
 #include "CipherInterface.h"
 #include <fstream>
+#include <vector>
+
 #include "DES.h"
 #include "AES.h"
 
 using namespace std;
+
+
+
+
 
 int main(int argc, char** argv)
 {
@@ -30,18 +36,79 @@ int main(int argc, char** argv)
 	unsigned char * cipherText;
 	unsigned char * output;
 
+	// open up input file and grab input conver it init unsigned char
+	infile.open(argv[4]);
+	string line;
+	string fileContents;
+	// cout << fileContents.length();
+
+
+
+	// Retrieve all the contents of the file and store it in string
+	while(getline(infile,line)){
+		fileContents += line;
+		if(string(argv[3]) == "ENC"){
+			fileContents.push_back('\n');
+		}
+	}
+	infile.close();
+
+	vector <string> blocks;
+	cout << "before pad" << fileContents.length() << endl;
+
+	if(string(argv[1]) == "AES"){
+
+		while(fileContents.length() % 16 != 0){
+			fileContents += "x";
+		}
+	}else {
+		while(fileContents.length() % 8 != 0){
+			fileContents += "x";
+		}
+	}
+	cout << fileContents.length() << endl;
+
+
+	int bindex = 0;
+	for(int i = 0; i < fileContents.length(); i++){
+		line += fileContents[i];
+		if(string(argv[1]) == "AES"){
+			if((i+1)%16 == 0){
+				blocks.push_back(line);
+				line = "";
+				bindex++;
+			}
+		}
+		else {
+			if((i+1)%8 == 0){
+				blocks.push_back(line);
+				line = "";
+				bindex++;
+		}
+
+	}
+}
+
+
+
+
+
 	if(string(argv[1]) == "DES"){
 		// set cipher to be DES
 		cipher = new DES();
+		outfile.open(argv[5]);
+		outfile << "";
+		outfile.close();
+		outfile.open(argv[5],ios_base::app);
 
-		// open up input file and grab input conver it init unsigned char
-		infile.open(argv[4]);
-		string input;
-		infile >> input;
-		unsigned char *inputText = (unsigned char*)input.c_str();
+
 
 		// output string
-		unsigned char *output;
+		unsigned char * output;
+		unsigned char *inputText;
+		// for(int i = 0; i < bindex; i++){
+		// 	cipher->encrypt();
+		// }
 
 		// check if the set key was valid
 		if(!cipher->setKey(key)){
@@ -50,18 +117,28 @@ int main(int argc, char** argv)
 
 		// arguments decide to encrypt/decrypt
 		if(string(argv[3]) == "ENC"){
-			output = cipher->encrypt(inputText);
+			for(int i = 0; i < bindex; i++){
+				inputText = (unsigned char*)blocks.at(i).c_str();
+				output = cipher->encrypt(inputText);
+				// output to file with arguments
+				outfile << output;
+
+			}
+
 		}else if(string(argv[3]) == "DEC"){
-			output = cipher->decrypt(inputText);
+			for(int i = 0; i < bindex; i++){
+				inputText = (unsigned char*)blocks.at(i).c_str();
+				outfile.open(argv[5],ios_base::app);
+				output = cipher->decrypt(inputText);
+				// output to file with arguments
+				outfile << output;
+				outfile.close();
+			}
 		}
 
-		// output to file with arguments
-		outfile.open(argv[5]);
-		outfile << output;
 
 		// close files
 		outfile.close();
-		infile.close();
 	}
 	else if(string(argv[1]) == "AES"){
 		// set cipher to be DES
@@ -70,8 +147,8 @@ int main(int argc, char** argv)
 		// open up input file and grab input conver it init unsigned char
 		infile.open(argv[4]);
 		string input;
-		infile >> input;
-		unsigned char *inputText = (unsigned char*)input.c_str();
+		outfile.open(argv[5],ios_base::app);
+		unsigned char *inputText;
 
 		// output string
 		unsigned char *output;
@@ -83,18 +160,28 @@ int main(int argc, char** argv)
 
 		// arguments decide to encrypt/decrypt
 		if(string(argv[3]) == "ENC"){
-			output = cipher->encrypt(inputText);
+			for(int i = 0; i < bindex; i++){
+				inputText = (unsigned char*)blocks.at(i).c_str();
+				output = cipher->encrypt(inputText);
+				// output to file with arguments
+				outfile << output;
+
+			}
 		}else if(string(argv[3]) == "DEC"){
-			output = cipher->decrypt(inputText);
+			for(int i = 0; i < bindex; i++){
+				inputText = (unsigned char*)blocks.at(i).c_str();
+				output = cipher->decrypt(inputText);
+				// output to file with arguments
+				outfile << output;
+
+			}
 		}
 
-		// output to file with arguments
-		outfile.open(argv[5]);
-		outfile << output;
+
 
 		// close files
 		outfile.close();
-		infile.close();
+
 	}else {
 			cout << "Invalid Cipher name: " << endl;
 			cout << "AES: Advanced Encryption Standard" << endl;

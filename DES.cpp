@@ -137,8 +137,7 @@ unsigned char* DES::decrypt(const unsigned char* ciphertext)
 	DES_LONG block[2];
 
 	// save the length of the cipher text
-	int cipherTextCount =  strlen((char*)ciphertext);
-
+	// int cipherTextCount =  strlen((char*)ciphertext);
 	// store cipherText in dynamic char array
 	unsigned char * plainText;
 	plainText = new unsigned char[8];
@@ -146,10 +145,10 @@ unsigned char* DES::decrypt(const unsigned char* ciphertext)
 	//unsigned char plainText[9];
 
 	// makes sure the block is exactly 8 characters
-	if(cipherTextCount != 8){
-		cout << "Cipher Text is not applicable" << endl;
-		return NULL;
-	}
+	// if(cipherTextCount != 8){
+	// 	cout << "Cipher Text is not applicable" << endl;
+	// 	return NULL;
+	// }
 	// put first 4 bytes of the plaintext in the a long
 	block[0] = ctol((unsigned char*)ciphertext);
 
@@ -166,7 +165,7 @@ unsigned char* DES::decrypt(const unsigned char* ciphertext)
 	ltoc(block[1],plainText + 4);
 
 
-	printf("Decrypted %s\n", plainText);
+	// printf("Decrypted %s\n", plainText);
 	return plainText;
 }
 

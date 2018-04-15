@@ -1,0 +1,11 @@
+./cipher AES "00123456789abcdef" ENC small.txt output.enc
+./cipher AES "00123456789abcdef" ENC big.txt output.enc
+
+
+./cipher AES "10123456789abcdef" DEC output.enc output.enc
+
+
+./cipher DES "0123456789abcdef" ENC small.txt output.enc
+./cipher DES "0123456789abcdef" ENC big.txt output.enc
+
+./cipher DES "0123456789abcdef" DEC output.enc output.enc
