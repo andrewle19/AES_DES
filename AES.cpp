@@ -88,6 +88,7 @@ unsigned char* AES::decrypt(const unsigned char* cipherText)
 	// calculate cipher text length
 	int cipherTextLength = strlen((char*)cipherText);
 
+	
 	unsigned char *plainText;
 
 	// Allocate plainText space dynamically
